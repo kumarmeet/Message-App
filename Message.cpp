@@ -18,6 +18,11 @@ public:
     {
         return this->_sm.front();
     }
+
+    int get_total_msg_sent()
+    {
+      return _sm.size();
+    }
 };
 
 class ReceiveMessage
@@ -35,6 +40,11 @@ public:
     {
         return this->_rm.front();
     }
+
+    int get_total_msg_received()
+    {
+      return _rm.size();
+    }
 };
 
 class Message
@@ -43,25 +53,37 @@ private:
     SendMessage sm;
     ReceiveMessage rm;
     string userName;
+
 public:
-    Message(string s)
+    Message(string userName)
     {
-      userName = s;
+      this->userName = userName;
     }
-    void sendMsg(Message &_sm, string s)
+
+    void sendMsg(Message &user2, string s)
     {
-        _sm.sm.set_sm(s);
-        this->rm.set_rm(s);
+        sm.set_sm(s);
+        user2.rm.set_rm(s);
     }
 
     void showSendMsg()
     {
-        cout<<userName<<" -> "<<this->rm.get_rm()<<endl;
+        cout<<userName<<" -> "<<this->sm.get_sm()<<endl;
     }
 
     void showReceiveMsg()
     {
         cout<<userName<<" -> "<<this->rm.get_rm()<<endl;
+    }
+
+    void totalSentMsg()
+    {
+      cout<<userName<<" -> "<<sm.get_total_msg_sent()<<endl;
+    }
+
+    void totalReceivedMsg()
+    {
+      cout<<userName<<" -> "<<rm.get_total_msg_received()<<endl;
     }
 };
 
@@ -70,9 +92,13 @@ int main()
     Message user1("Tony"), user2("Rohan");
 
     user1.sendMsg(user2, "Hello!");
-    user1.showReceiveMsg();
+    user1.sendMsg(user2, "How are you?");
+    user1.showSendMsg();
+    user2.showReceiveMsg();
 
     user2.sendMsg(user1, "Hey!");
-    user2.showReceiveMsg();
+    user2.sendMsg(user1, "I am fine, what about you?");
+    user2.showSendMsg();
+    user1.showReceiveMsg();
     return 0;
 }
