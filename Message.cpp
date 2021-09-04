@@ -12,8 +12,6 @@ class SendMessage {
 
     void set_sm(string s) {
         this->_sm.push_front(s);
-        auto it = _sm.begin();
-        *it++;
     }
 
     string get_sm() {
@@ -26,10 +24,12 @@ class SendMessage {
         return _sm.size();
     }
 
-//    list<string>::iterator get_msgs() {
-//        if(!_sm.empty())
-//            return _sm.begin();
-//    }
+    list<string> get_msgs() {
+        list <string> s; //for return empty
+        if(!_sm.empty())
+            return _sm;
+        return s;
+    }
 };
 
 class ReceiveMessage {
@@ -50,6 +50,13 @@ class ReceiveMessage {
     int get_total_msg_received() {
         return _rm.size();
     }
+
+    list<string> get_rec_msgs() {
+        list<string> r;//for return empty
+        if(!_rm.empty())
+            return _rm;
+        return r;
+    }
 };
 
 class Message {
@@ -63,9 +70,9 @@ class Message {
         this->userName = userName;
     }
 
-    void sendMsg(Message &user2, string s) {
+    void sendMsg(Message &receiver, string s) {
         sm.set_sm(s);
-        user2.rm.set_rm(s);
+        receiver.rm.set_rm(s);
     }
 
     void showSendMsg() {
@@ -84,32 +91,75 @@ class Message {
         cout<<userName<<" total received messages are -> "<<rm.get_total_msg_received()<<endl;
     }
 
-//    void findMsg(string s) {
-//        auto it = sm.get_msgs();
-//        cout<<*it--;
-//        return;
-//    }
+    void findMsg(string s) {
+        list<string> fmsg = sm.get_msgs();
 
+        auto it = find(fmsg.begin(), fmsg.end(), s);
+
+        if(it != fmsg.end())
+            cout<<"Found"<<endl;
+        else
+            cout<<"Not Found"<<endl;
+    }
+
+    void showAllMsg() {
+        list<string> s = sm.get_msgs();
+        list<string> r = rm.get_rec_msgs();
+
+        if(s.empty() && r.empty()) {
+            cout<<"No Message Found"<<endl;
+            return;
+        }
+
+        //reverse list for showing from old to recent
+        reverse(s.rbegin(), s.rend());
+        reverse(r.rbegin(), r.rend());
+
+        cout<<this->userName<<" -> "<<"Sent Messages: ";
+        for(auto it = s.begin(); it != s.end(); it++)
+            cout<<*it<<" ";
+
+        cout<<endl;
+
+        cout<<this->userName<<" -> ""Received Messages : ";
+        for(auto it = r.begin(); it != r.end(); it++)
+            cout<<*it<<" ";
+
+        cout<<endl;
+    }
 };
 
 int main() {
     Message user1("Tony"), user2("Rohan");
 
-    user1.sendMsg(user2, "Hello!");
-    user2.showReceiveMsg();
-    user2.sendMsg(user1, "Hey!");
-    user1.showReceiveMsg();
-    user1.sendMsg(user2, "How are you?");
-    user2.showReceiveMsg();
-    user2.sendMsg(user1, "I am fine, what about you?");
-    user1.showReceiveMsg();
+   user1.sendMsg(user2, "Hello!");
+   user1.showSendMsg();
+   user2.showReceiveMsg();
+
+   user2.sendMsg(user1, "Hey!");
+   user2.showSendMsg();
+   user1.showReceiveMsg();
+
+   user1.sendMsg(user2, "How are you?");
+   user1.showSendMsg();
+   user2.showReceiveMsg();
+
+   user2.sendMsg(user1, "I am fine, what about you?");
+   user2.showSendMsg();
+   user1.showReceiveMsg();
+
+   space(2);
+
+   user1.totalReceivedMsgCount();
+   user2.totalReceivedMsgCount();
+
+   space(2);
+   user1.findMsg("Hello!");
 
     space(2);
-    user1.totalReceivedMsgCount();
-    user2.totalReceivedMsgCount();
 
-    space(2);
-//    user1.findMsg("Hello");
+    user1.showAllMsg();
+    user2.showAllMsg();
 
     return 0;
 }
